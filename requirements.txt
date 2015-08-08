@@ -1,0 +1,3 @@
+setuptools==17.1.0
+mock
+unittest2

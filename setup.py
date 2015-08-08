@@ -23,12 +23,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ##############################################################################
-import os
+import sys
 from setuptools import setup
 
 
 with open('README.rst') as f:
     readme = f.read()
+
+if sys.version_info < (3,):
+    tests_require = ['mock', 'unittest2'],
+    test_suite = 'unittest2.collector'
+else:
+    tests_require = ['mock', 'unittest2py3k']
+    test_suite = 'unittest2.collector.collector'
 
 setup(
     name="docker-postgres-client",
@@ -61,5 +68,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    tests_require=['mock', 'unittest2']
+    tests_require=tests_require,
+    test_suite=test_suite
 )

@@ -2,11 +2,7 @@ language: python
 python:
   - 2.6
   - 2.7
-  - pypy
 install:
-  - pip list
+  - pip install -r requirements.txt
 script:
   - python setup.py test
-matrix:
-  allow_failures:
-    - python: pypy
