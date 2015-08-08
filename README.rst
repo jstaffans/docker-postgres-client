@@ -1,5 +1,6 @@
 .. image:: https://travis-ci.org/ajite/docker-postgres-client.svg?branch=master
     :target: https://travis-ci.org/ajite/docker-postgres-client
+.. image:: https://coveralls.io/repos/ajite/docker-postgres-client/badge.svg?branch=master&service=github :target: https://coveralls.io/github/ajite/docker-postgres-client?branch=master
 
 docker-postgres-client
 ======================
