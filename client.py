@@ -29,7 +29,7 @@ import sys
 
 class Client(object):
     def __init__(self, args=None):
-        if not args:
+        if args is None:
             args = sys.argv[1:]
         parser = self.parser()
         self.args = parser.parse_args(args)

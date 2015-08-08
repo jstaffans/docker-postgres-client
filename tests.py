@@ -42,7 +42,7 @@ class BaseTest(unittest.TestCase):
 class ClientTests(BaseTest):
     def setUp(self):
         super(ClientTests, self).setUp()
-        self.client = Client()
+        self.client = Client([])
         self.parser = self.client.parser()
 
     def test_get_tag(self):
@@ -108,7 +108,7 @@ class DropDBTests(BaseTest):
 class PsqlTests(BaseTest):
     def setUp(self):
         super(PsqlTests, self).setUp()
-        self.psql = Psql()
+        self.psql = Psql([])
 
     def test_parser(self):
         parser = self.psql.parser()
