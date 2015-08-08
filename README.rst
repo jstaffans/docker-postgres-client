@@ -13,7 +13,7 @@ To install and use it type the command below:
 
 .. code-block:: bash
 
-    pip install docker-Postgres-client
+    pip install docker-postgres-client
 
 You will then have four new commands available in your shell: psql, createdb, dropdb, and pg_dump. They allow you to connect, create, drop, dump, and import a database. If you want to add additional features feel free to fork this repository and make a merge request.
 
