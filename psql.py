@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##############################################################################
 # The MIT License (MIT)
@@ -23,45 +23,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ##############################################################################
-import argparse
-from subprocess import call, check_output
+from client import Client
+import os
 
 
-def get_tag(container):
-    image = check_output(
-        ["docker", "inspect", "--format",
-         "'{{ .Config.Image }}'", "%s" % container]
-    )
-    # if no tag
-    if ':' not in image:
-        return ''
-    return image[0:-2].strip("'").rpartition(':')[-1]
+class Psql(Client):
+    def parser(self):
+        parser = super(Psql, self).parser()
+        parser.add_argument('-d', '--database', help="Database name")
+        parser.add_argument('-f', '--file', help="File to import")
+        return parser
 
+    def docker_cmd(self):
+        args = self.args
+        res = super(Psql, self).docker_cmd()
+        if args.file:
+            # get the file directory name to mount it as /tmp
+            pwd = os.path.dirname(os.path.realpath(args.file))
+            res.append('--volume %s:/tmp' % pwd)
+        return res
 
-def cmd(args):
-    res = 'exec createdb -h db -p %s -U %s %s' % (
-        args.port, args.user, args.database)
-    return res
+    def container_cmd(self):
+        # mount a volume if a file is passed as argument
+        args = self.args
+        res = ['psql -h db -p %s -U %s' % (args.port, args.user)]
+        if args.database:
+            res.append('-d %s' % args.database)
+        # import the file from the mounted volume
+        if args.file:
+            res.append('-f /tmp/%s' % os.path.basename(args.file))
+        return res
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-c', '--container', help="Container name",
-        default="containers_postgres_1")
-    parser.add_argument(
-        '-p', '--port', help="Container internal port", default=5432)
-    parser.add_argument('-U', '--user', help="Container user",
-                        default='postgres')
-    parser.add_argument('database', help="Database name")
-
-    args = parser.parse_args()
-    container = args.container
-    tag = get_tag(container)
-    call(
-        '''docker run -it --link %s:db --rm postgres:%s \
-           sh -c \'%s\'''' % (
-            container, tag, cmd(args)), shell=True)
+    psql = Psql()
+    psql.run()
 
 if __name__ == '__main__':
     main()

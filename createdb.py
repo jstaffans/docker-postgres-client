@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 ##############################################################################
 # The MIT License (MIT)
@@ -23,45 +23,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ##############################################################################
-import argparse
-from subprocess import call, check_output
+from client import Client
 
 
-def get_tag(container):
-    image = check_output(
-        ["docker", "inspect", "--format",
-         "'{{ .Config.Image }}'", "%s" % container]
-    )
-    # if no tag
-    if ':' not in image:
-        return ''
-    return image[0:-2].strip("'").rpartition(':')[-1]
+class CreateDB(Client):
+    def parser(self):
+        parser = super(CreateDB, self).parser()
+        parser.add_argument('database', help="Database name")
+        return parser
 
-
-def cmd(args):
-    res = 'exec dropdb -h db -p %s -U %s %s' % (
-        args.port, args.user, args.database)
-    return res
+    def container_cmd(self):
+        # mount a volume if a file is passed as argument
+        args = self.args
+        return ['createdb -h db -p %s -U %s %s' % (
+            args.port, args.user, args.database)]
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '-c', '--container', help="Container name",
-        default="containers_postgres_1")
-    parser.add_argument(
-        '-p', '--port', help="Container internal port", default=5432)
-    parser.add_argument('-U', '--user', help="Container user",
-                        default='postgres')
-    parser.add_argument('database', help="Database name")
-
-    args = parser.parse_args()
-    container = args.container
-    tag = get_tag(container)
-    call(
-        '''docker run -it --link %s:db --rm postgres:%s \
-           sh -c \'%s\'''' % (
-            container, tag, cmd(args)), shell=True)
+    createdb = CreateDB()
+    createdb.run()
 
 if __name__ == '__main__':
     main()
