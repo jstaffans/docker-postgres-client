@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/ajite/docker-postgres-client.svg?branch=master
+    :target: https://travis-ci.org/ajite/docker-postgres-client
+
 docker-postgres-client
 ======================
 I created this library to work with different version of Docker Postgres without having the need to change my Postgres client.
