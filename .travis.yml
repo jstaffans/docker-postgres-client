@@ -4,6 +4,8 @@ python:
 install:
   - pip install -r requirements.txt
 script:
+  - pep8 .
+  - python setup.py install
   - coverage run setup.py test
 after_success:
   - coveralls

@@ -1,3 +1,6 @@
 setuptools==17.1.0
 argparse
 python-coveralls
+coverage
+pep8
+nose
