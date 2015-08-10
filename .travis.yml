@@ -6,6 +6,6 @@ install:
 script:
   - pep8 .
   - python setup.py install
-  - coverage run setup.py test
+  - nosetests --with-coverage
 after_success:
   - coveralls
