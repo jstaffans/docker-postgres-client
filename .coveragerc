@@ -1,3 +1,4 @@
 [report]
 omit =  
     tests.py
+    */site-packages/nose/*
