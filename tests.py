@@ -24,17 +24,17 @@
 ##############################################################################
 import unittest
 from mock import patch
-from client import Client
-from createdb import CreateDB
-from dropdb import DropDB
-from psql import Psql
-from pg_dump import PgDump
+from docker_postgres_client import Client
+from dcreatedb import CreateDB
+from ddropdb import DropDB
+from dpsql import Psql
+from dpg_dump import PgDump
 import os
 
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        self.get_image_patcher = patch('client.check_output')
+        self.get_image_patcher = patch('docker_postgres_client.check_output')
         self.mock_shellout = self.get_image_patcher.start()
         self.mock_shellout.return_value = "'postgres:latest'"
 

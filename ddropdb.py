@@ -23,38 +23,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ##############################################################################
-from client import Client
-import os
+from docker_postgres_client import Client
 
 
-class PgDump(Client):
+class DropDB(Client):
     def parser(self):
-        parser = super(PgDump, self).parser()
+        parser = super(DropDB, self).parser()
         parser.add_argument('database', help="Database name")
-        parser.add_argument('-f', '--file', help="Exported file name")
         return parser
-
-    def docker_cmd(self):
-        res = super(PgDump, self).docker_cmd()
-        pwd = os.getcwd()
-        res.append('--volume %s:/tmp' % pwd)
-        return res
 
     def container_cmd(self):
         # mount a volume if a file is passed as argument
         args = self.args
-        res = ['pg_dump -h db -p %s -U %s -d %s' % (
+        return ['dropdb -h db -p %s -U %s %s' % (
             args.port, args.user, args.database)]
-        if args.file:
-            res.append('> /tmp/%s' % args.file)
-        else:
-            res.append('> /tmp/%s.out' % args.database)
-        return res
 
 
 def main():
-    pgdump = PgDump()
-    pgdump.run()
+    dropdb = DropDB()
+    dropdb.run()
 
 if __name__ == '__main__':
     main()

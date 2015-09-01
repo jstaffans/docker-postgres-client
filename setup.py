@@ -34,20 +34,21 @@ test_suite = 'unittest2.collector'
 
 setup(
     name="docker-postgres-client",
-    version="0.0.1",
+    version="0.0.2",
     author="Augustin Cisterne-Kaas",
     author_email="ajitekun@gmail.com",
     description=(
         'Client that uses the PostgreSQL client inside a Docker container.'),
     platforms='any',
     license='MIT',
-    py_modules=['client', 'psql', 'pg_dump', 'createdb', 'dropdb'],
+    py_modules=['docker_postgres_client', 'dpsql', 'dpg_dump', 'dcreatedb',
+                'ddropdb'],
     entry_points={
         'console_scripts': [
-            'psql = psql:main',
-            'pg_dump = pg_dump:main',
-            'createdb = createdb:main',
-            'dropdb = dropdb:main',
+            'dpsql = dpsql:main',
+            'dpg_dump = dpg_dump:main',
+            'dcreatedb = dcreatedb:main',
+            'ddropdb = ddropdb:main',
         ]
     },
     keywords="docker postgres",
