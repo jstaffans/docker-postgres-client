@@ -34,8 +34,8 @@ import os
 
 class BaseTest(unittest.TestCase):
     def setUp(self):
-        self.get_tag_patcher = patch('client.check_output')
-        self.mock_shellout = self.get_tag_patcher.start()
+        self.get_image_patcher = patch('client.check_output')
+        self.mock_shellout = self.get_image_patcher.start()
         self.mock_shellout.return_value = "'postgres:latest'"
 
 
@@ -45,10 +45,16 @@ class ClientTests(BaseTest):
         self.client = Client([])
         self.parser = self.client.parser()
 
-    def test_get_tag(self):
-        output = self.client.get_tag('containers_postgres_1')
+    def test_get_image_latest(self):
+        output = self.client.get_image('containers_postgres_1')
         self.assertTrue(self.mock_shellout.called)
-        self.assertEqual('latest', output)
+        self.assertEqual('postgres:latest', output)
+
+    def test_get_image_specific_version(self):
+        self.mock_shellout.return_value = "'postgres:9.4'"
+        output = self.client.get_image('containers_postgres_1')
+        self.assertTrue(self.mock_shellout.called)
+        self.assertEqual('postgres:9.4', output)
 
     def test_parser_with_empty_args(self):
         args = self.parser.parse_args([])

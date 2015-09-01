@@ -34,20 +34,16 @@ class Client(object):
         parser = self.parser()
         self.args = parser.parse_args(args)
 
-    def get_tag(self, container):
-        image = ''
+    def get_image(self, container):
         try:
             image = check_output(
                 ["docker", "inspect", "--format",
                  "'{{ .Config.Image }}'", "%s" % container]
-            )
+            ).strip().strip("'")
+            return image
         except Exception:
             # Wrong container name error message will appear
-            pass
-        # If there is no tag then
-        if ':' not in image:
-            return ''
-        return image[0:-1].strip("'").rpartition(':')[-1]
+            exit()
 
     def parser(self):
         parser = argparse.ArgumentParser()
@@ -65,11 +61,11 @@ class Client(object):
 
     def cmd(self):
         args = self.args
-        tag = self.get_tag(args.container)
+        tag = self.get_image(args.container)
         docker_cmd = ' '.join(self.docker_cmd())
         container_cmd = ' '.join(self.container_cmd())
         return '''docker run -it --link %s:db %s \
-                  --rm postgres:%s sh -c \'exec %s\'
+                  --rm %s sh -c \'exec %s\'
                ''' % (args.container, docker_cmd, tag, container_cmd)
 
     def docker_cmd(self):
