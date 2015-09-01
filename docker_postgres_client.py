@@ -36,14 +36,13 @@ class Client(object):
 
     def get_image(self, container):
         try:
-            image = check_output(
+            return check_output(
                 ["docker", "inspect", "--format",
                  "'{{ .Config.Image }}'", "%s" % container]
             ).strip().strip("'")
-            return image
         except Exception:
             # Wrong container name error message will appear
-            exit()
+            raise sys.exit(0)
 
     def parser(self):
         parser = argparse.ArgumentParser()

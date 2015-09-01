@@ -2,3 +2,6 @@
 omit =  
     tests.py
     */site-packages/*
+exclude_lines =
+    if __name__ == .__main__.:
+    def main():

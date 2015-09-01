@@ -30,6 +30,7 @@ from ddropdb import DropDB
 from dpsql import Psql
 from dpg_dump import PgDump
 import os
+import sys
 
 
 class BaseTest(unittest.TestCase):
@@ -45,6 +46,10 @@ class ClientTests(BaseTest):
         self.client = Client([])
         self.parser = self.client.parser()
 
+    def tearDown(self):
+        self.get_image_patcher.stop()
+        super(ClientTests, self).tearDown()
+
     def test_get_image_latest(self):
         output = self.client.get_image('containers_postgres_1')
         self.assertTrue(self.mock_shellout.called)
@@ -55,6 +60,12 @@ class ClientTests(BaseTest):
         output = self.client.get_image('containers_postgres_1')
         self.assertTrue(self.mock_shellout.called)
         self.assertEqual('postgres:9.4', output)
+
+    def test_get_image_raise_exception(self):
+        self.get_image_patcher.stop()
+        with self.assertRaises(SystemExit):
+            self.client.get_image('XXXXXDoesNotExistXXXXX')
+        self.get_image_patcher.start()
 
     def test_parser_with_empty_args(self):
         args = self.parser.parse_args([])
@@ -80,11 +91,22 @@ class ClientTests(BaseTest):
         with self.assertRaises(NotImplementedError):
             self.client.container_cmd()
 
+    def test_run(self):
+        with self.assertRaises(NotImplementedError):
+            self.client.run()
+
 
 class CreateDBTests(BaseTest):
     def setUp(self):
         super(CreateDBTests, self).setUp()
         self.createdb = CreateDB(['blog'])
+
+    def test_class_init_with_sys_args(self):
+        sys.argv[1:] = ['-U', 'bob', '-c', 'postgres', '-p', '5438', 'blog']
+        try:
+            CreateDB()
+        except Exception, e:
+            self.fail(e)
 
     def test_parser(self):
         parser = self.createdb.parser()
