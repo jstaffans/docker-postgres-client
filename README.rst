@@ -21,7 +21,7 @@ All the bash command have -C (container) option  that you can use like below:
 
 .. code-block:: bash
 
-    dpsql -C CONTAINER_NAME -U user_name
+    dpsql -c CONTAINER_NAME -U user_name
 
 Last but not least all the scripts contain a useful help message to know how to use them.
 
